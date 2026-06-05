@@ -1,5 +1,15 @@
 # Digital Twin of Richard Feynman
 
+<p align="center">
+  <img src="image4.jpg" alt="Richard Feynman" width="500"/>
+</p>
+
+<p align="center">
+  <em>Richard Phillips Feynman (1918 - 1988), Nobel Laureate in Physics, 1965</em>
+</p>
+
+<br/>
+
 A Retrieval-Augmented Generation system that reconstructs the intellectual and conversational identity of Richard Phillips Feynman. Unlike conventional chatbots that produce generic responses from a single language model, this system separates factual scientific knowledge from personal voice and speaking rhythm, retrieves from each independently, and fuses them under a controlled persona layer before generation. The result is an agent that does not merely answer questions about Feynman but answers them the way he would have.
 
 This project was developed as part of the AIMS DTU Summer Research Project, 2026.
@@ -22,7 +32,7 @@ This project was developed as part of the AIMS DTU Summer Research Project, 2026
 
 ## Motivation
 
-Richard Feynman (1918-1988) was a Nobel Prize-winning theoretical physicist whose contributions span quantum electrodynamics, path integral formulation, superfluidity, and parton models. Beyond his research, he was recognized as one of the greatest science communicators of the twentieth century. His lectures at Caltech, his popular books such as *Surely You're Joking, Mr. Feynman!* and *What Do You Care What Other People Think?*, and his television interviews demonstrate a unique pedagogical style: he refused jargon, insisted on building understanding from first principles, and communicated complex physics through vivid everyday analogies.
+Richard Feynman was a Nobel Prize-winning theoretical physicist whose contributions span quantum electrodynamics, path integral formulation, superfluidity, and parton models. Beyond his research, he was recognized as one of the greatest science communicators of the twentieth century. His lectures at Caltech, his popular books such as *Surely You're Joking, Mr. Feynman!* and *What Do You Care What Other People Think?*, and his television interviews demonstrate a unique pedagogical style: he refused jargon, insisted on building understanding from first principles, and communicated complex physics through vivid everyday analogies.
 
 The goal of this project is to preserve that style computationally. A digital twin, in this context, is not a chatbot trained on generic data with a system prompt overlay. It is a structured retrieval and generation pipeline where the knowledge base, the persona base, the routing logic, and the output guardrails are each engineered to ensure that every response is both scientifically grounded and stylistically authentic.
 
@@ -46,32 +56,31 @@ The following diagram illustrates the end-to-end pipeline from user input to aud
 
 ```mermaid
 flowchart TB
-    A["User Query"] --> B["Preprocessing"]
-    B --> B1["Orthographic Normalization"]
-    B1 --> B2["Short-Term Memory Fetch"]
-    B2 --> B3["Long-Term K-Means Profile Fetch"]
-    B3 --> C{"Intent Router LLM"}
+    A[User Query] --> B[Preprocessing and Normalization]
+    B --> B1[Short-Term Memory Fetch]
+    B1 --> B2[Long-Term K-Means Profile Fetch]
+    B2 --> C{Intent Router LLM}
 
-    C -- "TECHNICAL" --> D1["Knowledge Graph\n(GraphRAG)"]
-    C -- "PERSONAL" --> D2["Rhythm Base\n(Qdrant Vector DB)"]
-    C -- "BLENDED" --> D3["Hybrid Engine\n(Graph + Vector, Async)"]
+    C -- TECHNICAL --> D1[Knowledge Graph - GraphRAG]
+    C -- PERSONAL --> D2[Rhythm Base - Qdrant Vector DB]
+    C -- BLENDED --> D3[Hybrid Engine - Graph and Vector]
 
-    D1 --> E["Contextual Compression"]
+    D1 --> E[Contextual Compression]
     D2 --> E
     D3 --> E
 
-    E --> F["MMR Re-Ranking"]
-    F --> G["Persona Augmentation Layer"]
-    G --> H["Gemini 2.5 Flash\nGeneration Engine"]
-    H --> I{"Guardrail Engine"}
+    E --> F[MMR Re-Ranking]
+    F --> G[Persona Augmentation Layer]
+    G --> H[Gemini 2.5 Flash Generation]
+    H --> I{Guardrail Engine}
 
-    I -- "Anomaly Detected" --> H
-    I -- "Jargon Detected" --> J["Rewrite in Plain English"]
-    J --> K["Final Response Text"]
-    I -- "Passed" --> K
+    I -- Anomaly Detected --> H
+    I -- Jargon Detected --> J[Rewrite in Plain English]
+    J --> K[Final Response Text]
+    I -- Passed --> K
 
-    K --> L["ElevenLabs TTS\nVoice Synthesis"]
-    L --> M["Audio + Text Output\nto Frontend"]
+    K --> L[ElevenLabs TTS Voice Synthesis]
+    L --> M[Audio and Text Output to Frontend]
 ```
 
 ### Stage-by-Stage Breakdown
@@ -108,23 +117,18 @@ The ingestion system processes raw source documents into structured, searchable 
 
 ```mermaid
 flowchart TB
-    subgraph Sources
-        K["Knowledge Folder\n6 Physics PDFs"]
-        P["Persona Folder\n6 PDFs + Transcripts"]
-    end
+    K[Knowledge Folder - 6 Physics PDFs] --> KP[LlamaParse - Layout-Aware PDF Parsing]
+    P[Persona Folder - 6 PDFs and Transcripts] --> PP[Standard Text and Transcript Parser]
 
-    K --> KP["LlamaParse\nLayout-Aware PDF Parsing\nLaTeX + Table Extraction"]
-    P --> PP["Standard Text Loader\nMarkdown + Transcript Parser"]
+    KP --> KC[Semantic Chunking - Topic Boundary Detection]
+    PP --> PC[Dialogue Chunking - Speaker Turn Splitting]
 
-    KP --> KC["Semantic Chunking\nEmbedding-Based Topic Boundary Detection"]
-    PP --> PC["Dialogue Chunking\nParagraph + Speaker-Turn Splitting"]
-
-    KC --> EMB["Embedding Layer\ntext-embedding-3-large\n3072 Dimensions"]
+    KC --> EMB[Embedding Layer - text-embedding-3-large]
     PC --> EMB
 
-    EMB --> QK["Qdrant: feynman_knowledge\nCollection"]
-    EMB --> QP["Qdrant: feynman_persona\nCollection"]
-    KC --> KG["NetworkX Knowledge Graph\nConcept Nodes + Relationship Edges"]
+    EMB --> QK[Qdrant feynman_knowledge Collection]
+    EMB --> QP[Qdrant feynman_persona Collection]
+    KC --> KG[NetworkX Knowledge Graph]
 ```
 
 **Knowledge Parsing.** Dense physics PDFs (including *The Feynman Lectures on Physics*, Volumes I through III) are parsed using LlamaParse, an AI-native document parser that understands multi-column academic layouts, mathematical equations, and table structures. Equations are converted to clean LaTeX format. When LlamaParse is unavailable, the system falls back to PyPDF extraction.
@@ -241,12 +245,12 @@ Create a `.env` file in the `backend/` directory with the following configuratio
 
 | Variable | Description | Required |
 |---|---|---|
-| `GEMINI_API_KEY` | Google Gemini API key for generation and routing | Yes |
-| `ELEVENLABS_API_KEY` | ElevenLabs API key for voice synthesis | Yes |
-| `ELEVENLABS_VOICE_ID` | Voice profile identifier from ElevenLabs | Yes |
-| `LLAMA_PARSE_API_KEY` | LlamaParse key for advanced PDF parsing | Optional |
-| `QDRANT_URL` | Qdrant server URL (default: http://localhost:6333) | Optional |
-| `ENABLE_TTS` | Enable or disable voice synthesis (default: false) | Optional |
+| GEMINI_API_KEY | Google Gemini API key for generation and routing | Yes |
+| ELEVENLABS_API_KEY | ElevenLabs API key for voice synthesis | Yes |
+| ELEVENLABS_VOICE_ID | Voice profile identifier from ElevenLabs | Yes |
+| LLAMA_PARSE_API_KEY | LlamaParse key for advanced PDF parsing | Optional |
+| QDRANT_URL | Qdrant server URL, default http://localhost:6333 | Optional |
+| ENABLE_TTS | Enable or disable voice synthesis, default false | Optional |
 
 ---
 
