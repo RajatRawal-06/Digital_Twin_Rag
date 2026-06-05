@@ -1,0 +1,63 @@
+[ React 3D Scrollytelling UI (Industrial Sci-Fi Theme) ] ◄──► [ Custom Spectrogram TTS ]
+                                          │
+                                    [ User Query ]
+                                          │
+┌─────────────────────────────────────────▼─────────────────────────────────────────┐
+│                      1. PRE-PROCESSING & COGNITIVE MEMORY                         │
+│                                                                                   │
+│  a) Lightweight LLM: Orthographic check (spelling/grammar normalization).         │
+│  b) Memory Fetch (Short-Term): Retrieve recent conversation context[cite: 18].   │
+│  c) K-Means Profiling (Long-Term): Fetch the user's dynamic topic cluster to      │
+│     understand their underlying knowledge level and past interests.    │
+└─────────────────────────────────────────┬─────────────────────────────────────────┘
+                                          │
+┌─────────────────────────────────────────▼─────────────────────────────────────────┐
+│                              2. INTENT ROUTER LLM                                 │
+│  Classifies query into: Technical Fact, Personal Anecdote, or Blended.            │
+└──────┬──────────────────────────────────┬──────────────────────────────────┬──────┘
+       │ (Technical/Physics)              │ (Life/Philosophy)                │ (Both)
+       ▼                                  ▼                                  ▼
+┌───────────────┐                  ┌───────────────┐                  ┌───────────────┐
+│KNOWLEDGE GRAPH│                  │  RHYTHM BASE  │                  │ HYBRID ENGINE │
+│  (GraphRAG)   │                  │  (Vector DB)  │                  │(Graph + Vector)
+│ Nodes & Edges │                  │ Semantic Match│                  │               │
+└──────┬────────┘                  └──────┬────────┘                  └──────┬────────┘
+       │                                  │                                  │
+┌──────▼──────────────────────────────────▼──────────────────────────────────▼──────┐
+│                           3. POST-RETRIEVAL COMPRESSION                           │
+│                                                                                   │
+│  a) MMR (Maximal Marginal Relevance): Ensures retrieved documents are diverse.    │
+│  b) Contextual Compressor: Discards noise, keeping only the exact sentences or    │
+│     graph nodes relevant to the prompt.                                           │
+└─────────────────────────────────────────┬─────────────────────────────────────────┘
+                                          │
+┌─────────────────────────────────────────▼─────────────────────────────────────────┐
+│                         4. PERSONA AUGMENTATION LAYER                             │
+│                                                                                   │
+│  Dynamically fetch 1-2 examples of Feynman's exact speech patterns from the       │
+│  Rhythm Base and append them to the system prompt as Few-Shot examples.           │
+└─────────────────────────────────────────┬─────────────────────────────────────────┘
+                                          │
+┌─────────────────────────────────────────▼─────────────────────────────────────────┐
+│                              5. GENERATION ENGINE                                 │
+│                                                                                   │
+│  Gemini 2.5 Flash synthesizes the GraphRAG facts, the Vector style constraints,   │
+│  and the user's K-Means memory profile into a single coherent response[cite: 19].│
+└─────────────────────────────────────────┬─────────────────────────────────────────┘
+                                          │
+┌─────────────────────────────────────────▼─────────────────────────────────────────┐
+│                         6. ANOMALY DETECTION GUARDRAIL                            │
+│                                                                                   │
+│  Cross-checks output embeddings against a baseline of Feynman's actual vocabulary.│
+│  Forces an instant regeneration if the LLM hallucinated modern jargon.            │
+└─────────────────────────────────────────┬─────────────────────────────────────────┘
+                                          │
+┌─────────────────────────────────────────▼─────────────────────────────────────────┐
+│                           7. ASYNC OPS & EVALUATION                               │
+│                                                                                   │
+│  a) K-Means Update: Re-cluster the user's memory profile with the new interaction.│
+│  b) Ragas Metrics: Score Answer Relevance and Context Precision on the backend.   │
+│  c) LangSmith: Trace routing latency and token usage.                             │
+└───────────────────────────────────────────────────────────────────────────────────┘
+                                          │
+                                 [ Output to User ]

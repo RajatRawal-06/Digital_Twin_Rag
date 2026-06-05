@@ -1,0 +1,9 @@
+backend/venv/
+backend/data/ltm/*.json
+backend/data/baseline_embedding.json
+frontend/node_modules/
+frontend/dist/
+.env
+*.pyc
+__pycache__/
+.DS_Store
