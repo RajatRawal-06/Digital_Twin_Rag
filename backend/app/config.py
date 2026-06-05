@@ -27,9 +27,22 @@ KNOWLEDGE_DIR = str(PROJECT_ROOT / "Knowledge")
 PERSONA_DIR = str(PROJECT_ROOT / "Persona")
 
 # API keys
-GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+_raw_gemini_keys = os.getenv("GEMINI_API_KEY", "")
+GEMINI_API_KEYS: list[str] = [k.strip() for k in _raw_gemini_keys.split(",") if k.strip()]
+GEMINI_API_KEY: str = GEMINI_API_KEYS[0] if GEMINI_API_KEYS else ""
 LLAMA_PARSE_API_KEY: str = os.getenv("LLAMA_PARSE_API_KEY", "")
 LANGSMITH_API_KEY: str = os.getenv("LANGSMITH_API_KEY", "")
+
+# Gemini key pool (lazy init)
+_gemini_pool = None
+
+def get_gemini_pool():
+    global _gemini_pool
+    if _gemini_pool is None and GEMINI_API_KEYS:
+        from app.core.key_pool import GeminiKeyPool
+        _gemini_pool = GeminiKeyPool(GEMINI_API_KEYS)
+        print(f"[Config] Gemini key pool initialized with {len(GEMINI_API_KEYS)} key(s)")
+    return _gemini_pool
 
 # Gemini models
 GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")

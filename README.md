@@ -61,9 +61,9 @@ flowchart TB
     B1 --> B2["Long-Term K-Means Profile Fetch"]
     B2 --> C{"Intent Router LLM"}
 
-    C -- "TECHNICAL" --> D1["Knowledge Graph - GraphRAG"]
-    C -- "PERSONAL" --> D2["Rhythm Base - Qdrant Vector DB"]
-    C -- "BLENDED" --> D3["Hybrid Engine - Graph and Vector"]
+    C -->|TECHNICAL| D1["Knowledge Graph - GraphRAG"]
+    C -->|PERSONAL| D2["Rhythm Base - Qdrant Vector DB"]
+    C -->|BLENDED| D3["Hybrid Engine - Graph and Vector"]
 
     D1 --> E["Contextual Compression"]
     D2 --> E
@@ -74,10 +74,10 @@ flowchart TB
     G --> H["Gemini 2.5 Flash Generation"]
     H --> I{"Guardrail Engine"}
 
-    I -- "Anomaly Detected" --> H
-    I -- "Jargon Detected" --> J["Rewrite in Plain English"]
+    I -->|Anomaly Detected| H
+    I -->|Jargon Detected| J["Rewrite in Plain English"]
     J --> K["Final Response Text"]
-    I -- "Passed" --> K
+    I -->|Passed| K
 
     K --> L["ElevenLabs TTS Voice Synthesis"]
     L --> M["Audio and Text Output to Frontend"]
@@ -245,7 +245,7 @@ Create a `.env` file in the `backend/` directory with the following configuratio
 
 | Variable | Description | Required |
 |---|---|---|
-| GEMINI_API_KEY | Google Gemini API key for generation and routing | Yes |
+| GEMINI_API_KEY | Google Gemini API key for generation and routing. Use a comma-separated list to enable rotating keys. | Yes |
 | ELEVENLABS_API_KEY | ElevenLabs API key for voice synthesis | Yes |
 | ELEVENLABS_VOICE_ID | Voice profile identifier from ElevenLabs | Yes |
 | LLAMA_PARSE_API_KEY | LlamaParse key for advanced PDF parsing | Optional |

@@ -6,9 +6,7 @@ from enum import Enum
 
 from google import genai
 
-from app.config import GEMINI_API_KEY, INTENT_ROUTER_MODEL
-
-_client: genai.Client | None = None
+from app.config import GEMINI_API_KEY, INTENT_ROUTER_MODEL, get_gemini_pool
 
 _ROUTER_PROMPT = """\
 You are a query classifier for a Richard Feynman digital twin system.
@@ -77,7 +75,10 @@ async def classify_intent(message: str, context: list[dict]) -> IntentType:
     prompt = _ROUTER_PROMPT.format(message=message, context=ctx_str)
 
     try:
-        response = _get_client().models.generate_content(
+        pool = get_gemini_pool()
+        if pool is None:
+            return _heuristic_intent(message)
+        response = pool.generate_with_retry(
             model=INTENT_ROUTER_MODEL,
             contents=prompt,
         )
@@ -90,12 +91,6 @@ async def classify_intent(message: str, context: list[dict]) -> IntentType:
 
     return _heuristic_intent(message)
 
-
-def _get_client() -> genai.Client:
-    global _client
-    if _client is None:
-        _client = genai.Client(api_key=GEMINI_API_KEY)
-    return _client
 
 
 def _heuristic_intent(message: str) -> IntentType:

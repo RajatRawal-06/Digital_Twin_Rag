@@ -5,11 +5,9 @@ from __future__ import annotations
 from google import genai
 from google.genai import types as genai_types
 
-from app.config import GEMINI_API_KEY, GEMINI_MODEL
+from app.config import GEMINI_API_KEY, GEMINI_MODEL, get_gemini_pool
 from app.core.intent_router import IntentType
 from app.core.schemas import RetrievedChunk
-
-_client: genai.Client | None = None
 
 _FEYNMAN_IDENTITY = """\
 You are modeling Richard Phillips Feynman: physicist, teacher, bongo drummer,
@@ -44,7 +42,10 @@ async def generate_response(
     )
 
     try:
-        response = _get_client().models.generate_content(
+        pool = get_gemini_pool()
+        if pool is None:
+            return _offline_response(user_message, context_chunks, intent)
+        response = pool.generate_with_retry(
             model=GEMINI_MODEL,
             contents=user_message,
             config=genai_types.GenerateContentConfig(
@@ -57,12 +58,6 @@ async def generate_response(
         print(f"[Generation] Gemini call failed: {exc}")
         return _offline_response(user_message, context_chunks, intent)
 
-
-def _get_client() -> genai.Client:
-    global _client
-    if _client is None:
-        _client = genai.Client(api_key=GEMINI_API_KEY)
-    return _client
 
 
 def _build_system_prompt(

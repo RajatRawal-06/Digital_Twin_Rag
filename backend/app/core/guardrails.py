@@ -14,10 +14,10 @@ from app.config import (
     FALLBACK_RESPONSE,
     GEMINI_API_KEY,
     INTENT_ROUTER_MODEL,
+    get_gemini_pool,
 )
 from app.core.embeddings import cosine_similarity, get_embedding_service
 
-_client: genai.Client | None = None
 _BASELINE_PATH = Path(DATA_DIR) / "baseline_embedding.json"
 _SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
 _JARGON_WORDS = {
@@ -84,16 +84,16 @@ class GuardrailEngine:
         return " ".join(cleaned)
 
     async def _rewrite_sentence(self, sentence: str) -> str:
-        if not GEMINI_API_KEY:
-            return _local_jargon_rewrite(sentence)
-
         try:
             import asyncio
 
+            pool = get_gemini_pool()
+            if pool is None:
+                return _local_jargon_rewrite(sentence)
             response = await asyncio.to_thread(
-                _get_client().models.generate_content,
-                model=INTENT_ROUTER_MODEL,
-                contents=_REWRITE_PROMPT.format(sentence=sentence),
+                pool.generate_with_retry,
+                INTENT_ROUTER_MODEL,
+                _REWRITE_PROMPT.format(sentence=sentence),
             )
             return (response.text or sentence).strip()
         except Exception as exc:
@@ -110,12 +110,6 @@ class GuardrailEngine:
             print(f"[Guardrail] Could not load baseline embedding: {exc}")
             return None
 
-
-def _get_client() -> genai.Client:
-    global _client
-    if _client is None:
-        _client = genai.Client(api_key=GEMINI_API_KEY)
-    return _client
 
 
 def _local_jargon_rewrite(sentence: str) -> str:
