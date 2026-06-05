@@ -56,31 +56,31 @@ The following diagram illustrates the end-to-end pipeline from user input to aud
 
 ```mermaid
 flowchart TB
-    A[User Query] --> B[Preprocessing and Normalization]
-    B --> B1[Short-Term Memory Fetch]
-    B1 --> B2[Long-Term K-Means Profile Fetch]
-    B2 --> C{Intent Router LLM}
+    A["User Query"] --> B["Preprocessing and Normalization"]
+    B --> B1["Short-Term Memory Fetch"]
+    B1 --> B2["Long-Term K-Means Profile Fetch"]
+    B2 --> C{"Intent Router LLM"}
 
-    C -- TECHNICAL --> D1[Knowledge Graph - GraphRAG]
-    C -- PERSONAL --> D2[Rhythm Base - Qdrant Vector DB]
-    C -- BLENDED --> D3[Hybrid Engine - Graph and Vector]
+    C -- "TECHNICAL" --> D1["Knowledge Graph - GraphRAG"]
+    C -- "PERSONAL" --> D2["Rhythm Base - Qdrant Vector DB"]
+    C -- "BLENDED" --> D3["Hybrid Engine - Graph and Vector"]
 
-    D1 --> E[Contextual Compression]
+    D1 --> E["Contextual Compression"]
     D2 --> E
     D3 --> E
 
-    E --> F[MMR Re-Ranking]
-    F --> G[Persona Augmentation Layer]
-    G --> H[Gemini 2.5 Flash Generation]
-    H --> I{Guardrail Engine}
+    E --> F["MMR Re-Ranking"]
+    F --> G["Persona Augmentation Layer"]
+    G --> H["Gemini 2.5 Flash Generation"]
+    H --> I{"Guardrail Engine"}
 
-    I -- Anomaly Detected --> H
-    I -- Jargon Detected --> J[Rewrite in Plain English]
-    J --> K[Final Response Text]
-    I -- Passed --> K
+    I -- "Anomaly Detected" --> H
+    I -- "Jargon Detected" --> J["Rewrite in Plain English"]
+    J --> K["Final Response Text"]
+    I -- "Passed" --> K
 
-    K --> L[ElevenLabs TTS Voice Synthesis]
-    L --> M[Audio and Text Output to Frontend]
+    K --> L["ElevenLabs TTS Voice Synthesis"]
+    L --> M["Audio and Text Output to Frontend"]
 ```
 
 ### Stage-by-Stage Breakdown
@@ -117,18 +117,18 @@ The ingestion system processes raw source documents into structured, searchable 
 
 ```mermaid
 flowchart TB
-    K[Knowledge Folder - 6 Physics PDFs] --> KP[LlamaParse - Layout-Aware PDF Parsing]
-    P[Persona Folder - 6 PDFs and Transcripts] --> PP[Standard Text and Transcript Parser]
+    K["Knowledge Folder - 6 Physics PDFs"] --> KP["LlamaParse - Layout-Aware PDF Parsing"]
+    P["Persona Folder - 6 PDFs and Transcripts"] --> PP["Standard Text and Transcript Parser"]
 
-    KP --> KC[Semantic Chunking - Topic Boundary Detection]
-    PP --> PC[Dialogue Chunking - Speaker Turn Splitting]
+    KP --> KC["Semantic Chunking - Topic Boundary Detection"]
+    PP --> PC["Dialogue Chunking - Speaker Turn Splitting"]
 
-    KC --> EMB[Embedding Layer - text-embedding-3-large]
+    KC --> EMB["Embedding Layer - text-embedding-3-large"]
     PC --> EMB
 
-    EMB --> QK[Qdrant feynman_knowledge Collection]
-    EMB --> QP[Qdrant feynman_persona Collection]
-    KC --> KG[NetworkX Knowledge Graph]
+    EMB --> QK["Qdrant feynman_knowledge Collection"]
+    EMB --> QP["Qdrant feynman_persona Collection"]
+    KC --> KG["NetworkX Knowledge Graph"]
 ```
 
 **Knowledge Parsing.** Dense physics PDFs (including *The Feynman Lectures on Physics*, Volumes I through III) are parsed using LlamaParse, an AI-native document parser that understands multi-column academic layouts, mathematical equations, and table structures. Equations are converted to clean LaTeX format. When LlamaParse is unavailable, the system falls back to PyPDF extraction.
