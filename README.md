@@ -12,7 +12,7 @@
 
 A Retrieval-Augmented Generation system that reconstructs the intellectual and conversational identity of Richard Phillips Feynman. Unlike conventional chatbots that produce generic responses from a single language model, this system separates factual scientific knowledge from personal voice and speaking rhythm, retrieves from each independently, and fuses them under a controlled persona layer before generation. The result is an agent that does not merely answer questions about Feynman but answers them the way he would have.
 
-This project was developed as part of the AIMS DTU Summer Research Project, 2026.
+This project was developed as part of the AIMS DTU Summer Project, 2026.
 
 ---
 
