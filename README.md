@@ -160,7 +160,7 @@ Each cluster centroid is compared against three anchor embeddings that represent
 
 ## Data Ingestion Pipeline
 
-The ingestion system processes raw source documents into structured, searchable chunks stored in the vector database and knowledge graph. The combined corpus spans approximately 4,200 semantic chunks across both Qdrant collections, with roughly 850 concept nodes in the NetworkX knowledge graph.
+The ingestion system processes raw source documents into structured, searchable chunks stored in the vector database and knowledge graph.
 
 ```mermaid
 flowchart TB
