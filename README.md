@@ -173,12 +173,9 @@ flowchart TB
     KC --> EMB["Embedding Layer - text-embedding-3-large"]
     PC --> EMB
 
-    KC --> KG["Graph Entity Extraction - Concepts and Relations"]
-    KG --> NGS["Node Summarisation - LLM Summary per Concept"]
-    NGS --> NKG["NetworkX Knowledge Graph - ~850 nodes, graph.pkl"]
-
-    EMB --> QK["Qdrant feynman_knowledge Collection - ~3000 chunks"]
-    EMB --> QP["Qdrant feynman_persona Collection - ~1200 chunks"]
+    EMB --> QK["Qdrant feynman_knowledge Collection"]
+    EMB --> QP["Qdrant feynman_persona Collection"]
+    KC --> KG["NetworkX Knowledge Graph"]
 ```
 
 **Knowledge Parsing.** Dense physics PDFs (including *The Feynman Lectures on Physics*, Volumes I through III) are parsed using LlamaParse, an AI-native document parser that understands multi-column academic layouts, mathematical equations, and table structures. Equations are converted to clean LaTeX format. When LlamaParse is unavailable, the system falls back to PyPDF extraction.
