@@ -124,7 +124,7 @@ flowchart TB
 
 **Preprocessing.** The raw user message is normalised: whitespace is collapsed, common misspellings of domain terms (e.g., "Feynmann", "q e d") are corrected, and the cleaned string is passed downstream.
 
-**Memory Fetch.** Two memory systems contribute context. The short-term buffer holds the last five conversation turns for pronoun resolution and follow-up handling. The long-term memory module applies K-Means clustering to infer a knowledge profile from accumulated user history (described in detail below).
+**Memory Fetch.** Two memory systems contribute context. The short-term buffer holds the last five conversation turns for pronoun resolution and follow-up handling. The long-term memory module applies K-Means clustering to infer your knowledge profile and simulate a tailored teaching experience from your accumulated user history (described in detail below).
 
 **Intent Router.** A lightweight Gemini model (Gemini 2.0 Flash Lite) classifies the query into one of three categories: TECHNICAL (physics, equations, factual explanations), PERSONAL (life stories, opinions, philosophy), or BLENDED (questions requiring both). A deterministic heuristic fallback ensures classification even when the LLM is unavailable.
 
@@ -152,9 +152,13 @@ flowchart TB
 
 ### Long-Term Memory: K-Means Knowledge Profiling
 
-The long-term memory module accumulates embeddings of every query a user has submitted across sessions, storing them in a persistent JSON profile keyed to a session identifier. At the start of each new conversation, these stored query embeddings are loaded and fed into a K-Means clustering step using scikit-learn with `k = 3`, corresponding to three latent interaction styles: conceptual and definitional questions (beginner), mechanistic and equation-level questions (intermediate), and derivation-level or research-adjacent questions (expert).
+The long-term memory module remembers the types of questions you've asked in the past. It groups your historical questions into three categories (using K-Means clustering with `k = 3`) to figure out your knowledge level:
 
-Each cluster centroid is compared against three anchor embeddings that represent archetypes of those interaction styles ("What is electricity?", "How does Schrödinger's equation describe quantum states?", "Derive the path integral formulation from first principles"). The cluster whose centroid is closest to each anchor inherits its label. The user's dominant cluster — determined by which label contains the most of their historical queries — is then passed into the generation system prompt as the inferred knowledge level, adjusting response complexity, analogy density, and mathematical depth accordingly. As more queries accumulate, the clusters stabilise and the inferred level becomes increasingly reliable. For new users with fewer than five historical queries, the system defaults to intermediate and begins profiling from that baseline.
+1. **Beginner**: Simple, conceptual questions (e.g., "What is electricity?")
+2. **Intermediate**: Detailed, mechanistic questions (e.g., "How does Schrödinger's equation work?")
+3. **Expert**: Advanced, research-level questions (e.g., "Derive the path integral formulation")
+
+By clustering your past questions, the system can simulate how Feynman would talk specifically to you. If you usually ask beginner questions, the AI will use simpler words and more analogies. If you ask expert questions, it will use complex math and deeper explanations. For new users, it starts at the intermediate level until it learns enough about your style.
 
 ---
 
