@@ -175,6 +175,18 @@ The long-term memory module automatically infers your knowledge level in the bac
 - **Step 5: Default for New Users**
   If a user is completely new and has fewer than 5 queries, clustering isn't reliable yet. The system will **default to Intermediate** and begin profiling as history accumulates.
 
+### 🧠 Example Simulation
+
+Here is how the memory profiling works in a real scenario:
+
+1. **New Question:** *"What happens inside a black hole?"* (This is the new user query).
+2. **First Embedding:** This question is immediately converted into a mathematical vector (an embedding).
+3. **Past History:** Imagine you have asked **425 questions** before (these are your past queries).
+4. **Clustering:** Those 425 past queries are already grouped into three clusters: Beginner, Intermediate, and Advanced (Expert).
+5. **Comparison:** The system calculates the center point (centroid) of each of the three clusters. It then compares the new user query embedding to these three centroids using cosine similarity.
+6. **Assignment:** Whichever cluster centroid is closest to the new question wins. For example, if the question is mathematically deep, it will land closest to the Advanced cluster.
+7. **System Prompt Update:** The system instantly knows your current knowledge level on this specific topic and adds the add-on instruction: *"The user appears to be at an advanced level. Adjust analogy density and mathematical depth accordingly."*
+
 ---
 
 ## Data Ingestion Pipeline
