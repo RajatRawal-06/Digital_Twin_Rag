@@ -1,44 +1,46 @@
-"""Embedding service with API-backed and local deterministic modes."""
+"""Embedding service using Gemini text-embedding-004 with offline-safe fallback."""
 
 from __future__ import annotations
 
 import hashlib
 import math
-import os
 import re
 from typing import Iterable
 
-from app.config import EMBEDDING_DIM, EMBEDDING_MODEL
+from app.config import EMBEDDING_DIM, EMBEDDING_MODEL, GEMINI_API_KEY
 
 _TOKEN_RE = re.compile(r"[a-zA-Z0-9']+")
 _service: "EmbeddingService | None" = None
 
 
 class EmbeddingService:
-    """Production embedding wrapper with an offline-safe fallback."""
+    """Production embedding wrapper using Gemini, with an offline-safe fallback."""
 
     def __init__(self, model: str = EMBEDDING_MODEL, dim: int = EMBEDDING_DIM):
         self.model = model
         self.dim = dim
-        self._openai_enabled = bool(os.getenv("OPENAI_API_KEY"))
+        self._gemini_enabled = bool(GEMINI_API_KEY)
 
     def embed(self, text: str) -> list[float]:
         return self.embed_batch([text])[0]
 
     def embed_batch(self, texts: list[str]) -> list[list[float]]:
-        if self._openai_enabled:
+        if self._gemini_enabled:
             try:
-                return self._openai_embed_batch(texts)
+                return self._gemini_embed_batch(texts)
             except Exception as exc:
-                print(f"[Embeddings] OpenAI embedding failed, using local fallback: {exc}")
+                print(f"[Embeddings] Gemini embedding failed, using local fallback: {exc}")
         return [self._hash_embedding(text) for text in texts]
 
-    def _openai_embed_batch(self, texts: list[str]) -> list[list[float]]:
-        import openai
+    def _gemini_embed_batch(self, texts: list[str]) -> list[list[float]]:
+        from google import genai
 
-        client = openai.OpenAI()
-        response = client.embeddings.create(input=texts, model=self.model)
-        return [item.embedding for item in response.data]
+        client = genai.Client(api_key=GEMINI_API_KEY)
+        result = client.models.embed_content(
+            model=self.model,
+            contents=texts,
+        )
+        return [list(emb.values) for emb in result.embeddings]
 
     def _hash_embedding(self, text: str) -> list[float]:
         vector = [0.0] * self.dim

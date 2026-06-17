@@ -55,8 +55,8 @@ KNOWLEDGE_COLLECTION: str = os.getenv("KNOWLEDGE_COLLECTION", "feynman_knowledge
 PERSONA_COLLECTION: str = os.getenv("PERSONA_COLLECTION", "feynman_persona")
 
 # Embeddings
-EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "text-embedding-3-large")
-EMBEDDING_DIM: int = int(os.getenv("EMBEDDING_DIM", "3072"))
+EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "text-embedding-004")
+EMBEDDING_DIM: int = int(os.getenv("EMBEDDING_DIM", "768"))
 
 # Retrieval
 TOP_K_KNOWLEDGE: int = int(os.getenv("TOP_K_KNOWLEDGE", "6"))

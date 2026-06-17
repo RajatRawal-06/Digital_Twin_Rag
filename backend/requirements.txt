@@ -10,8 +10,7 @@ google-genai>=0.8.0
 # Vector DB
 qdrant-client==1.9.1
 
-# Embeddings
-openai==1.35.3
+
 
 # Data ingestion and parsing
 llama-parse==0.4.9
