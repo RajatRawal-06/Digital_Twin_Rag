@@ -142,7 +142,7 @@ flowchart TB
 
 **Guardrail Engine.** The generated output passes through two safety checks:
 
-- **Anomaly Detection.** Every verified Feynman source chunk (books, lectures, interview transcripts) is embedded using Gemini `text-embedding-004` during the ingestion phase. A baseline persona centroid is computed by averaging all persona collection embeddings into a single representative vector. At inference time, the generated response is embedded and its cosine distance from this centroid is computed. If the distance exceeds a tuned threshold of 0.35 (determined empirically by measuring the maximum centroid distance across 200 authentic Feynman passages, set to reject anything that falls outside that distribution), the response is rejected and replaced with the fallback: *"I haven't the slightest idea about that — it must be something you young folks came up with after my time."* This ensures that out-of-character responses (e.g., corporate-sounding language or content from outside Feynman's domain) are structurally filtered rather than relying on prompt instructions alone.
+- **Anomaly Detection.** Every verified Feynman source chunk (books, lectures, interview transcripts) is embedded using Gemini `gemini-embedding-001` during the ingestion phase. A baseline persona centroid is computed by averaging all persona collection embeddings into a single representative vector. At inference time, the generated response is embedded and its cosine distance from this centroid is computed. If the distance exceeds a tuned threshold of 0.35 (determined empirically by measuring the maximum centroid distance across 200 authentic Feynman passages, set to reject anything that falls outside that distribution), the response is rejected and replaced with the fallback: *"I haven't the slightest idea about that — it must be something you young folks came up with after my time."* This ensures that out-of-character responses (e.g., corporate-sounding language or content from outside Feynman's domain) are structurally filtered rather than relying on prompt instructions alone.
 
 - **Jargon Filtering.** Each sentence is scanned for a curated list of corporate and academic jargon terms (e.g., "synergy", "leverage", "utilise", "paradigm shift"). Flagged sentences are rewritten by a secondary LLM call into plain, first-year college English consistent with Feynman's communication style.
 
@@ -170,7 +170,7 @@ flowchart TB
     KP --> KC["Semantic Chunking - Topic Boundary Detection"]
     PP --> PC["Dialogue Chunking - Speaker Turn Splitting"]
 
-    KC --> EMB["Embedding Layer - Gemini text-embedding-004"]
+    KC --> EMB["Embedding Layer - Gemini gemini-embedding-001"]
     PC --> EMB
 
     EMB --> QK["Qdrant feynman_knowledge Collection"]
@@ -198,7 +198,7 @@ flowchart TB
 |---|---|
 | Generation Model | Gemini 2.5 Flash |
 | Intent Classification | Gemini 2.0 Flash Lite |
-| Embedding Model | Gemini text-embedding-004 (768 dimensions) |
+| Embedding Model | Gemini gemini-embedding-001 (3072 dimensions) |
 | Vector Database | Qdrant |
 | Knowledge Graph | NetworkX (GraphRAG) |
 | Document Parsing | LlamaParse, PyPDF |
