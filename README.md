@@ -152,13 +152,28 @@ flowchart TB
 
 ### Long-Term Memory: K-Means Knowledge Profiling
 
-The long-term memory module remembers the types of questions you've asked in the past. It groups your historical questions into three categories (using K-Means clustering with `k = 3`) to figure out your knowledge level:
+The long-term memory module automatically infers your knowledge level in the background without needing to ask. Here is the step-by-step breakdown:
 
-1. **Beginner**: Simple, conceptual questions (e.g., "What is electricity?")
-2. **Intermediate**: Detailed, mechanistic questions (e.g., "How does Schrödinger's equation work?")
-3. **Expert**: Advanced, research-level questions (e.g., "Derive the path integral formulation")
+- **Step 1: Store Query Embeddings**
+  Whenever you ask a question, the query is embedded (using `gemini-embedding-001`) and stored in a persistent JSON file tied to your session ID. This profile grows dynamically over time across conversations.
 
-By clustering your past questions, the system can simulate how Feynman would talk specifically to you. If you usually ask beginner questions, the AI will use simpler words and more analogies. If you ask expert questions, it will use complex math and deeper explanations. For new users, it starts at the intermediate level until it learns enough about your style.
+- **Step 2: K-Means Clustering (k=3)**
+  At the start of a new conversation, the system loads all your historical embeddings and runs K-Means clustering with `k=3`. This groups all your past queries into 3 clusters based on semantic similarity.
+
+- **Step 3: Compare with Anchor Embeddings**
+  The system defines 3 anchor sentences representing three distinct knowledge levels:
+  - **Beginner**: *"What is electricity?"*
+  - **Intermediate**: *"How does Schrödinger's equation describe quantum states?"*
+  - **Expert**: *"Derive the path integral formulation from first principles"*
+  
+  The centroid of each of the 3 clusters is calculated and compared to these anchors using cosine similarity. The anchor closest to a cluster assigns its label to that cluster.
+
+- **Step 4: Find Dominant Level**
+  The system counts which cluster contains the majority of your historical queries. This dominant cluster determines your inferred knowledge level. This level is then injected directly into the system prompt for generation:
+  > *"The user appears to be at an [intermediate] level. Adjust analogy density and mathematical depth accordingly."*
+
+- **Step 5: Default for New Users**
+  If a user is completely new and has fewer than 5 queries, clustering isn't reliable yet. The system will **default to Intermediate** and begin profiling as history accumulates.
 
 ---
 
