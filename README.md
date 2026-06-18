@@ -57,7 +57,7 @@ Feynman was a Nobel Prize-winning theoretical physicist whose contributions span
 
 A video walkthrough of the system is available here:
 
-**[Watch the Demo on Google Drive](https://drive.google.com/file/d/111dKWBT9tEy8TvB3mSlns7Wrrwts3PGB/view?usp=drive_link)**
+**[Watch the Demo on Google Drive](https://drive.google.com/file/d/1MuSRNHgFASsetKT0IQvICSl_tsctst0l/view?usp=sharing)**
 
 The demo covers a live conversation session, the intent routing logic switching between retrieval paths, the guardrail engine triggering a jargon rewrite, and the ElevenLabs voice synthesis output.
 
