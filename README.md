@@ -175,7 +175,7 @@ The long-term memory module automatically infers your knowledge level in the bac
 - **Step 5: Default for New Users**
   If a user is completely new and has fewer than 5 queries, clustering isn't reliable yet. The system will **default to Intermediate** and begin profiling as history accumulates.
 
-### 🧠 Example Simulation
+###  Example Simulation
 
 Here is how the memory profiling works in a real scenario:
 
